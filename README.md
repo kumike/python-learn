@@ -1,2 +1,2 @@
 # python-learn
-calculate the area in bash
+Скриптик подсчёта времени перебора словаря
