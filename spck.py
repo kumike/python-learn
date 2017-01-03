@@ -2,18 +2,27 @@
 
 import argparse
 from sys import exit
+
 p=argparse.ArgumentParser()
-p.add_argument('-s','--speed',metavar=' ',action='store',type=int,dest='speed',help=('Скорость подбора'),default='0')
-p.add_argument('-n','--number_of_pass',metavar=' ',action='store',type=int,dest='number',help=('Количество паролей в словаре'),default='0')
+p.add_argument('-s','--speed',metavar=' ',action='store',
+               type=int,dest='speed',help=('Скорость подбора'),default='0')
+p.add_argument('-f','--file',metavar=' ',action='store',
+               type=str,dest='file',help=('/путь/к_словарю/dict.txt'),required=False)
+
 args=p.parse_args()
-if args.speed==0 or args.number==0:
-    print (p.print_help())
-    exit() 
-d={'hour':3600,'minute':60,'day':24}
-val=args.number//(args.speed*d['hour'])
-if val<=0:
-    val=args.number//(args.speed*d['minute'])
-    print('\033[1;32mМинут',val,'\033[1;m')
-if val>=0 and val<=d['day']:   
-    print('\033[1;32mЧасов',val,'\033[1;m')
-if val>=d['day']:val=val//d['day'];print('  \033[1;32m',val,'Cуток\033[1;m') 
+
+if args.speed==0 or args.file==False:
+    print(p.print_help()) #('Смотри spck -h для списка опций')
+    exit()  ### Выход если одна из опций имеет значение по умолчанию
+
+### Считаем строки в файле с паролями
+result=sum(1 for l in open(args.file, 'r'))### переменная содержит количество строк в файле
+print('Number of passwords in the dictionary: ',result)
+
+
+d={'hour':3600,'day':24}
+
+val=result//(args.speed*d['hour'])
+if val>=0 and val<=d['day']:  
+    print('Время перебора, часов:',val)
+if val>=d['day']:val=val//d['day'];print('Время перебора, суток:',val) ### укороченый синтаксис if, простые конструкции можно писать коротко
