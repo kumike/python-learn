@@ -1,6 +1,3 @@
-#skl=(['Секунд','Секунда','Секунды'],['Минут','Минута','Минуты'],['Час','Часа','Часов'],['День','Дня','Дней'])
-#skl=(['Неделя','Недели'],['День','Дня','Дней'],['Час','Часа','Часов'],['Минут','Минута','Минуты'],['Секунд','Секунда','Секунды'])
-#print(skl[0][1],skl[1][2],skl[2][1],skl[3][2],skl[4][0],sep='\n')
 import os
 import sys
 import re
@@ -11,10 +8,9 @@ from optparse import OptionParser,IndentedHelpFormatter
 prog=os.path.basename(sys.argv[0]) # в переменной хранится имя скрипта, как его не назови.
 
 ### парсер аргументов командной строки
-desc='считалка времени ламалки чёртовой както форматит этот модуль вроде неплохо так форматит описание считалки'
-epilog='от така хуйня малята :)'
+desc=' '
+epilog=':)'
 ihf=IndentedHelpFormatter(max_help_position=32) # задаем ширину вывода строчек справки в столбцах(длинна строки 32 знака\столбца)
-#parser=OptionParser(usage=optparse.SUPPRESS_USAGE,description=desc,epilog=epilog,formatter=ihf)
 parser=OptionParser(description=desc,epilog=epilog,formatter=ihf)
 
 parser.add_option('-f',dest='filename',type='string',help='/patch/to/your/dict, опцию можно задать вместе с -A или -P')
@@ -36,7 +32,6 @@ def inputNumPass():
 				print('\nДопускаются только целые числа!\n')
 	except KeyboardInterrupt: # если юзер при вводе значений жмет ctrl-c то выходим и печатаем сообщение
 		exit('\nВыход!') # если не ловить это то будет бросатся Traceback и стандартное сообщение в консоль
-	#	exit('\r') # выйти молча
 	return dia
 def inputSpeed():
 	try:
@@ -56,17 +51,12 @@ def inputSpeed():
 
 ### функция подсчёта паролей в словаре	
 def calcPassInDic():
-	dicfile=open(opt.filename,'r')
-	dia=sum(1 for line in dicfile) # переменная содержит количество строк в файле
-	dicfile.close()
-	# или так, если файл не оч большой 
-#	dia=int(len(open(opt.filename,'r').readlines())) # как в таком случае закрыть файл? что нада обязательно как пишут ..
-#	print('Number of passwords in the dictionary:',dia)
-	print('Количество паролей в словаре:',dia),dia
+	# если открывать файл через менеджер контекста то не нужно тогда его закрывать, with позаботится о закрытии
+	with open(opt.filename,'r') as dicfile: # в open(,'r') 'r' не важен, по умолчанию открывается для чтения, на всяк случай указал
+		dia=sum(1 for line in dicfile) # sum() возвращает int, думаю преобразовыватьв int лишнее.
+	print('Количество паролей в словаре:',dia)
 	return dia
 
-#ls=os.popen('cat so.txt','r') # открываем файл с строчкой, пока для тестов
-fle='cat so.txt' # можно передать в функцию ниже значения переменной, например значение аргумента при запуске скрипта
 ### функция для старта паралельно бенчмарка и анимации и возврата значения скорости полученого бенчмарком
 def loadNbench():
 	# проверяем установлен ли aircrack-ng
@@ -90,15 +80,15 @@ def loadNbench():
 	def startBenchstr_num():
 		global ls # делаем переменную доступную из всего остального скрипта
 		if opt.speedA: # если опция speedA True запускаем aircrack -S
-			ls=os.popen(fle).readlines()
+			ls=os.popen('aircrack-ng -S').readlines()
 			ls=ls.pop() # вырезаем и возвращаем в переменную последнее значения из списка полученого от aircrack-ng
 		if opt.speedP: # если опция speedP True запускаем pyrit benchmark
-			ls=os.popen('cat pso.txt').readlines()
+			ls=os.popen('pyrit benchmark').readlines()
 			for line in ls: # вырезаем нужную строчку регулярным выражением из списка строк приехавшим из pyrit
-				m=re.search('.+total.+',line)
+				m=re.search('.*total.',line)
 				if m is not None: # re.search возвращает None если не находит вхождения в строке. if m != None
 					ls=m.group()
-					break
+					break # в принципе не обязательно, без брик сделает сколько то лишних пустых итераций
 		nonlocal signal_stop # если задана переменная внутри функции нужно nonlocal
 		signal_stop+=1
 	### функция стартует анимацию которая проигрывается во время бенчмарка	
@@ -156,17 +146,13 @@ def loadNbench():
 			str_num.append(i)
 			if dot>=2:
 				str_num.pop()
-#	print(str_num)
-#	print('количество точек ',dot)
 	x=0
 	speed='' # инициализируем пустую переменную типа str потом в цикле добавим к ней значения
 	# считаем количество результатов в списке и конкантенируем их в переменную, числа в списке имеют тип str
 	for i in str_num:
 		speed+=str_num[x]
 		x+=1
-#	print(type(speed),speed)
 	speed=int(round(float(speed))) # приводим к числу и округляем полученый результат к целому числу, pyrit возвращает float
-#	print(type(speed),speed)
 	return speed,dia
 	
 ### функция запуска интерактивного режима
@@ -188,7 +174,7 @@ def helpwin():
 # выбор нужного режима работы, интерактивный или с определением скорости
 if opt.speedA and opt.speedP: # если обе переменные True
 #	print('error')
-	exit('error!!')
+	exit('[ERROR] Only -A or -P')
 
 elif opt.speedA or opt.speedP: # если одна из переменных True
 	speed,dia=loadNbench()
@@ -198,10 +184,7 @@ elif opt.filename is not None and opt.speedA is None and opt.speedA is None and 
 	exit() # выходим чтобы дальше с нулём не считало
 else:
 	helpwin()
-#	print('+',aster,'+\n| ',helpstring,' |\n+',aster,'+',sep='')
 	speed,dia=interactive()
-
-
 
 ### начало расчёта
 # делим количество паролей в словаре на скорость перебора, паролей в секунду, получаем значение в секундах 
