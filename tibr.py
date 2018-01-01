@@ -1,11 +1,7 @@
 import os
 import sys
-import re
 import threading
-import time
 from optparse import OptionParser,IndentedHelpFormatter
-#import optparse
-prog=os.path.basename(sys.argv[0]) # в переменной хранится имя скрипта, как его не назови.
 
 ### парсер аргументов командной строки
 desc=' '
@@ -62,17 +58,14 @@ def loadNbench():
 	# проверяем установлен ли aircrack-ng
 	if opt.speedA: # проверка opt.speedA на True, короткая запись if opt.speedA is True, в PEP написано что так не верно
 		whis=os.popen('whereis aircrack-ng').read() 
-		check=None
-		check=re.search('(/bin/|/sbin/)',whis)
-		#check='/bin/' in whis # True если есть вхождение, лучше пока проверять регулярками дарма что лишний модуль..
-		if check is None: # если нет то пишем соопчение и выходим
+		check='/bin/' in whis # True если есть вхождение
+		if check is False: # если нет то пишем соопчение и выходим
 			exit('Пожалуйста, установите aircrack-ng')
 	# проверяем установлен ли pyrit
 	if opt.speedP is True:
 		whis=os.popen('whereis pyrit').read() 
-		check=None
-		check=re.search('(/bin/|/sbin/)',whis)
-		if check is None: # если нет то пишем соопчение и выходим
+		check='/bin/' in whis # если нет вхождения то False если есть True
+		if check is False: # если нет то пишем соопчение и выходим
 			exit('Пожалуйста, установите pyrit')
 	### функция запускает бенчмарки и возвращает строку с результатом
 	# если измениться эта переменная, то остановится цикл который рисует анимацию, переменная меняется когда завершит работу бенчмарк
@@ -84,10 +77,9 @@ def loadNbench():
 			ls=ls.pop() # вырезаем и возвращаем в переменную последнее значения из списка полученого от aircrack-ng
 		if opt.speedP: # если опция speedP True запускаем pyrit benchmark
 			ls=os.popen('pyrit benchmark').readlines()
-			for line in ls: # вырезаем нужную строчку регулярным выражением из списка строк приехавшим из pyrit
-				m=re.search('.*total.',line)
-				if m is not None: # re.search возвращает None если не находит вхождения в строке. if m != None
-					ls=m.group()
+			for line in ls: # вырезаем нужную строчку из списка строк приехавшим из pyrit
+				if 'total.' in line: # если есть вхождение в строке присваиваим строку переменной и завершаим цикл
+					ls=line
 					break # в принципе не обязательно, без брик сделает сколько то лишних пустых итераций
 		nonlocal signal_stop # если задана переменная внутри функции нужно nonlocal
 		signal_stop+=1
@@ -98,9 +90,10 @@ def loadNbench():
 		an=('|','/','-','\\')
 		dot=('...')
 		ilo,ian=0,0
+		from time import sleep
 		while signal_stop is 0:
 			print(lo[ilo],dot,an[ian],sep='',end='\r')
-			time.sleep(0.1) # лучше размещать после слиип, снаала выводит а потом спит, не спит перед первым ваводом.
+			sleep(0.1) # лучше размещать после слиип, снаала выводит а потом спит, не спит перед первым ваводом.
 			ilo+=1
 			ian+=1
 			if ilo is len(lo):ilo=0 # инкрементировать переменную нада после принт чтобы начинался перебор кортежа с 0 ()кортеж []список
@@ -164,6 +157,9 @@ def interactive():
 
 ### функция выводит строку хелпа и рисует вокруг строки рамку вне зависимости от длинны строки
 def helpwin():
+#	from os import path
+	from sys import argv
+	prog=os.path.basename(argv[0]) # в переменной хранится имя скрипта, как его не назови.
 	helpstring='Смотри '+prog+' -h для дополнительных аргументов'
 	lenth=len(helpstring)+2
 	border='-'*lenth
