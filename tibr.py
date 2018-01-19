@@ -5,8 +5,22 @@ import threading
 from optparse import OptionParser,IndentedHelpFormatter
 
 ### парсер аргументов командной строки
-desc=' '
-epilog=':)'
+desc='Скрипт для подсчёта времени перебора определённого количества паролей или словаря.'
+
+epilog='Примеры:                                                               Интерактивный режим:'
+'''###### user@serv:~$ python3 tibr.py
+С аргументами:  
+###### user@serv:~$ python3 tibr.py -s 1500  -f /path/to_the_dictionary/mydict.txt  
+Или так, с получением скорости aircrack-ng и количеством паролей сто милионов:
+###### user@serv:~$ python3 tibr.py -A  -n 100000000  
+
+Можно скопировать файл в /usr/bin и вызывать скрипт как обычную команду в bash:  
+###### user@serv:~$ cp tibr.py /usr/bin/tibr
+Возмёт скорость pyryt и посчитает время перебора словаря mydict.txt    
+###### user@serv:~$ tibr -P -f ~/mydict.txt  
+
+Cкорость перебора также можно узнать вручную в выводе команды aircrack-ng -S, естественно, aircrack-ng должен быть установлен, узнать скорость перебора утилиты pyrit можно набрав pyrit benchmark, pyrit также должен быть установлен. В интерактивном режиме можно подставить скорость из других програм и количество парольных фраз напрямую.
+'''
 ihf=IndentedHelpFormatter(max_help_position=32) # задаем ширину вывода строчек справки в столбцах(длинна строки 32 знака\столбца)
 parser=OptionParser(description=desc,epilog=epilog,formatter=ihf)
 
@@ -49,10 +63,13 @@ def inputSpeed():
 ### функция подсчёта паролей в словаре	
 def calcPassInDic():
 	# если открывать файл через менеджер контекста то не нужно тогда его закрывать, with позаботится о закрытии
-	with open(opt.filename,'r') as dicfile: # в open(,'r') 'r' не важен, по умолчанию открывается для чтения, на всяк случай указал
-		dia=sum(1 for line in dicfile) # sum() возвращает int, думаю преобразовыватьв int лишнее.
-	print('Количество паролей в словаре:',dia)
-	return dia
+	try:
+		with open(opt.filename,'r') as dicfile: # в open(,'r') 'r' не важен, по умолчанию открывается для чтения, на всяк случай указал
+			dia=sum(1 for line in dicfile) # sum() возвращает int, думаю преобразовыватьв int лишнее.
+		print('Количество паролей в словаре:',dia)
+		return dia
+	except FileNotFoundError:
+		exit('Файл не найден!')
 
 ### функция для старта паралельно бенчмарка и анимации и возврата значения скорости полученого бенчмарком
 def loadNbench():
