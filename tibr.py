@@ -3,12 +3,9 @@
 import os
 import threading
 from optparse import OptionParser,IndentedHelpFormatter
-
 ### парсер аргументов командной строки
 desc='Скрипт для подсчёта времени перебора определённого количества паролей или словаря.'
 epilog=''
-
-#ihfe=IndentedHelpFormatter.format_epilog()
 
 ihf=IndentedHelpFormatter(max_help_position=32) # задаем ширину вывода строчек справки в столбцах(длинна строки 32 знака\столбца)
 parser=OptionParser(description=desc,epilog=epilog,formatter=ihf)
@@ -69,7 +66,7 @@ def loadNbench():
 		if check is False: # если нет то пишем соопчение и выходим
 			exit('Пожалуйста, установите aircrack-ng')
 	# проверяем установлен ли pyrit
-	if opt.speedP is True:
+	if opt.speedP:
 		whis=os.popen('whereis pyrit').read() 
 		check='/bin/' in whis # если нет вхождения то False если есть True
 		if check is False: # если нет то пишем соопчение и выходим
