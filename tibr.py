@@ -2,26 +2,21 @@
 #!/usr/bin/env python3
 import os
 import threading
-#from argsparse import argsionParser,IndentedHelpFormatter
 import argparse
 
 ### парсер аргументов командной строки
 desc='Скрипт для подсчёта времени перебора определённого количества паролей или словаря.'
 epilog=''
 
-#ihfe=IndentedHelpFormatter.format_epilog()
-
-#ihf=argparse.HelpFormatter(prog='%(prog)s',max_help_position=32) # задаем ширину вывода строчек справки в столбцах(длинна строки 32 знака\столбца)
-
 parser=argparse.ArgumentParser(description=desc,epilog=epilog)#,formatter_class=ihf)
 
 parser.add_argument('-f',dest='filename',help='/patch/to/your/dict, опцию можно задать вместе с -A или -P')
-
 parser.add_argument('-n',dest='dia',type=int,help='Количество вариантов паролей')
 parser.add_argument('-s',dest='speed',type=int,help='insert your speed, допустимыми являются только целые числа')
 parser.add_argument('-A',dest='speedA',action='store_true',help='Получить скорость вычисления хендшейка в Aircrack-ng')
 parser.add_argument('-P',dest='speedP',action='store_true',help='Получить скорость вычисления хеншейка в pyrit')
 args=parser.parse_args()
+
 ### начало определения функций ###
 ### функции для интерактивного ввода
 def inputNumPass():
@@ -120,7 +115,7 @@ def loadNbench():
 	else: # иначе взять файл и подсчитать в нём количество паролей(строк)
 		dia=calcPassInDic()
 
-	# вытягиваем число из строки полученой из бенчмарка
+	# вытягиваем число из строки полученой из бенчмарка pyrit
 	str_num=[]
 	dot=0
 	for i in ls:
