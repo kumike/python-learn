@@ -2,21 +2,26 @@
 #!/usr/bin/env python3
 import os
 import threading
-from optparse import OptionParser,IndentedHelpFormatter
+#from argsparse import argsionParser,IndentedHelpFormatter
+import argparse
+
 ### парсер аргументов командной строки
 desc='Скрипт для подсчёта времени перебора определённого количества паролей или словаря.'
 epilog=''
 
-ihf=IndentedHelpFormatter(max_help_position=32) # задаем ширину вывода строчек справки в столбцах(длинна строки 32 знака\столбца)
-parser=OptionParser(description=desc,epilog=epilog,formatter=ihf)
+#ihfe=IndentedHelpFormatter.format_epilog()
 
-parser.add_option('-f',dest='filename',type='string',help='/patch/to/your/dict, опцию можно задать вместе с -A или -P')
-parser.add_option('-n',dest='dia',type='int',help='Количество вариантов паролей')
-parser.add_option('-s',dest='speed',type='int',help='insert your speed, допустимыми являются только целые числа')
-parser.add_option('-A',dest='speedA',action='store_true',help='Получить скорость вычисления хендшейка в Aircrack-ng')
-parser.add_option('-P',dest='speedP',action='store_true',help='Получить скорость вычисления хеншейка в pyrit')
-(opt,args)=parser.parse_args()
+#ihf=argparse.HelpFormatter(prog='%(prog)s',max_help_position=32) # задаем ширину вывода строчек справки в столбцах(длинна строки 32 знака\столбца)
 
+parser=argparse.ArgumentParser(description=desc,epilog=epilog)#,formatter_class=ihf)
+
+parser.add_argument('-f',dest='filename',help='/patch/to/your/dict, опцию можно задать вместе с -A или -P')
+
+parser.add_argument('-n',dest='dia',type=int,help='Количество вариантов паролей')
+parser.add_argument('-s',dest='speed',type=int,help='insert your speed, допустимыми являются только целые числа')
+parser.add_argument('-A',dest='speedA',action='store_true',help='Получить скорость вычисления хендшейка в Aircrack-ng')
+parser.add_argument('-P',dest='speedP',action='store_true',help='Получить скорость вычисления хеншейка в pyrit')
+args=parser.parse_args()
 ### начало определения функций ###
 ### функции для интерактивного ввода
 def inputNumPass():
@@ -50,7 +55,7 @@ def inputSpeed():
 def calcPassInDic():
 	# если открывать файл через менеджер контекста то не нужно тогда его закрывать, with позаботится о закрытии
 	try:
-		with open(opt.filename,'r') as dicfile: # в open(,'r') 'r' не важен, по умолчанию открывается для чтения, на всяк случай указал
+		with open(args.filename,'r') as dicfile: # в open(,'r') 'r' не важен, по умолчанию открывается для чтения, на всяк случай указал
 			dia=sum(1 for line in dicfile) # sum() возвращает int, думаю преобразовыватьв int лишнее.
 		print('Количество паролей в словаре:',dia)
 		return dia
@@ -60,13 +65,13 @@ def calcPassInDic():
 ### функция для старта паралельно бенчмарка и анимации и возврата значения скорости полученого бенчмарком
 def loadNbench():
 	# проверяем установлен ли aircrack-ng
-	if opt.speedA: # проверка opt.speedA на True, короткая запись if opt.speedA is True, в PEP написано что так не верно
+	if args.speedA: # проверка args.speedA на True, короткая запись if args.speedA is True, в PEP написано что так не верно
 		whis=os.popen('whereis aircrack-ng').read() 
 		check='/bin/' in whis # True если есть вхождение
 		if check is False: # если нет то пишем соопчение и выходим
 			exit('Пожалуйста, установите aircrack-ng')
 	# проверяем установлен ли pyrit
-	if opt.speedP:
+	if args.speedP:
 		whis=os.popen('whereis pyrit').read() 
 		check='/bin/' in whis # если нет вхождения то False если есть True
 		if check is False: # если нет то пишем соопчение и выходим
@@ -76,10 +81,10 @@ def loadNbench():
 	signal_stop=None
 	def startBenchstr_num():
 		global ls # делаем переменную доступную из всего остального скрипта
-		if opt.speedA: # если опция speedA True запускаем aircrack -S
+		if args.speedA: # если опция speedA True запускаем aircrack -S
 			ls=os.popen('aircrack-ng -S').readlines()
 			ls=ls.pop() # вырезаем и возвращаем в переменную последнее значения из списка полученого от aircrack-ng
-		if opt.speedP: # если опция speedP True запускаем pyrit benchmark
+		if args.speedP: # если опция speedP True запускаем pyrit benchmark
 			ls=os.popen('pyrit benchmark').readlines()
 			for line in ls: # вырезаем нужную строчку из списка строк приехавшим из pyrit
 				if 'total.' in line: # если есть вхождение в строке присваиваим строку переменной и завершаим цикл
@@ -110,7 +115,7 @@ def loadNbench():
 	th_startBenchstr_num.join();th_startLoadAnim.join()
 
 	# если не задано аргументом путь к файлу с паролями спросить интерактивно количество паролей
-	if opt.filename is None:
+	if args.filename is None:
 		dia=inputNumPass()
 	else: # иначе взять файл и подсчитать в нём количество паролей(строк)
 		dia=calcPassInDic()
@@ -173,14 +178,14 @@ def helpwin():
 
 # TODO доделать нада чтобы с бенчамрком требовалось ввести или путь к файлу паролей или количество паролей вручную
 # выбор нужного режима работы, интерактивный или с определением скорости
-if opt.speedA and opt.speedP: # если обе переменные True
+if args.speedA and args.speedP: # если обе переменные True
 #	print('error')
 	exit('[ERROR] Only -A or -P')
 
-elif opt.speedA or opt.speedP: # если одна из переменных True
+elif args.speedA or args.speedP: # если одна из переменных True
 	speed,dia=loadNbench()
 # если задана только опция -f то посчитать и вывисти количество строк в словаре
-elif opt.filename is not None and opt.speedA is None and opt.speedA is None and opt.dia is None and opt.speed is None:
+elif args.filename is not None and args.speedA is False and args.speedA is False and args.dia is None and args.speed is None:
 	calcPassInDic()
 	exit() # выходим чтобы дальше с нулём не считало
 else:
