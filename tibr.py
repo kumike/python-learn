@@ -6,21 +6,10 @@ from optparse import OptionParser,IndentedHelpFormatter
 
 ### парсер аргументов командной строки
 desc='Скрипт для подсчёта времени перебора определённого количества паролей или словаря.'
+epilog=''
 
-epilog='Примеры:                                                               Интерактивный режим:'
-'''###### user@serv:~$ python3 tibr.py
-С аргументами:  
-###### user@serv:~$ python3 tibr.py -s 1500  -f /path/to_the_dictionary/mydict.txt  
-Или так, с получением скорости aircrack-ng и количеством паролей сто милионов:
-###### user@serv:~$ python3 tibr.py -A  -n 100000000  
+#ihfe=IndentedHelpFormatter.format_epilog()
 
-Можно скопировать файл в /usr/bin и вызывать скрипт как обычную команду в bash:  
-###### user@serv:~$ cp tibr.py /usr/bin/tibr
-Возмёт скорость pyryt и посчитает время перебора словаря mydict.txt    
-###### user@serv:~$ tibr -P -f ~/mydict.txt  
-
-Cкорость перебора также можно узнать вручную в выводе команды aircrack-ng -S, естественно, aircrack-ng должен быть установлен, узнать скорость перебора утилиты pyrit можно набрав pyrit benchmark, pyrit также должен быть установлен. В интерактивном режиме можно подставить скорость из других програм и количество парольных фраз напрямую.
-'''
 ihf=IndentedHelpFormatter(max_help_position=32) # задаем ширину вывода строчек справки в столбцах(длинна строки 32 знака\столбца)
 parser=OptionParser(description=desc,epilog=epilog,formatter=ihf)
 
