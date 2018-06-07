@@ -115,35 +115,17 @@ def loadNbench():
 	else: # иначе взять файл и подсчитать в нём количество паролей(строк)
 		dia=calcPassInDic()
 
-	# вытягиваем число из строки полученой из бенчмарка pyrit
-	str_num=[]
+	# вытягиваем число из строки полученой из бенчмарка pyrit или aircrack-ng
+	dch={0:'0',1:'1',2:'2',3:'3',4:'4',5:'5',6:'6',7:'7',8:'8',9:'9',10:'.'}
 	dot=0
-	for i in ls:
-		if i is chr(0x30):
-			str_num.append(i)
-		if i is chr(0x31):
-			str_num.append(i)
-		if i is chr(0x32):
-			str_num.append(i)
-		if i is chr(0x33):
-			str_num.append(i)
-		if i is chr(0x34):
-			str_num.append(i)
-		if i is chr(0x35):
-			str_num.append(i)
-		if i is chr(0x36):
-			str_num.append(i)
-		if i is chr(0x37):
-			str_num.append(i)
-		if i is chr(0x38):
-			str_num.append(i)
-		if i is chr(0x39):
-			str_num.append(i)
-		if i is chr(0x2e):
-			dot+=1
-			str_num.append(i)
-			if dot>=2:
-				str_num.pop()
+	b=[]
+	for char in ls:
+		if char:
+			for key in dch:
+				if char is dch[key]:
+					if dch[key] is '.':dot+=1
+					b.append(dch[key])
+		if dot>=1:break
 	x=0
 	speed='' # инициализируем пустую переменную типа str потом в цикле добавим к ней значения
 	# считаем количество результатов в списке и конкантенируем их в переменную, числа в списке имеют тип str
