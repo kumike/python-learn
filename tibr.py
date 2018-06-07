@@ -6,10 +6,7 @@ import argparse
 
 ### парсер аргументов командной строки
 desc='Скрипт для подсчёта времени перебора определённого количества паролей или словаря.'
-epilog=''
-
-parser=argparse.ArgumentParser(description=desc,epilog=epilog)#,formatter_class=ihf)
-
+parser=argparse.ArgumentParser(description=desc)
 parser.add_argument('-f',dest='filename',help='/patch/to/your/dict, опцию можно задать вместе с -A или -P')
 parser.add_argument('-n',dest='dia',type=int,help='Количество вариантов паролей')
 parser.add_argument('-s',dest='speed',type=int,help='insert your speed, допустимыми являются только целые числа')
@@ -205,41 +202,69 @@ def skl(va,x): # x при вызове функции задается номе�
 	return mass[x][n]
 
 ### годы
-if val>=31557600:year=val//(31557600);val=val-year*31557600 # 86400секВсут*365.25днейВгоду с учётом высокосного каждый 4 год.
+if val>=31557600:
+	year=val//(31557600)
+	val=val-year*31557600 # 86400секВсут*365.25днейВгоду с учётом высокосного каждый 4 год.
 if year>0:
-	if val is 0:print(' ',year,skl(year,0))
-	else:print(' ',year,skl(year,0),end='')
-if year>150:val=0 # если получается больше 150 лет, обрезаем вывод месяцев дней и т.д, накапливается ошибка 29 дней февраля.
+	if val is 0:
+		print(' ',year,skl(year,0))
+	else:
+		print(' ',year,skl(year,0),end='')
+if year>150:
+	val=0 # если получается больше 150 лет, обрезаем вывод месяцев дней и т.д, накапливается ошибка 29 дней февраля.
 ### месяцы
-if val>=2635200:mounth=val//(2635200);val=val-mounth*2635200 # 24часаВсут*3600секВчас*30.5днейВмес с учётом 30-31д=2635200.0 дробь нах
+if val>=2635200:
+	mounth=val//(2635200)
+	val=val-mounth*2635200 # 24часаВсут*3600секВчас*30.5днейВмес с учётом 30-31д=2635200.0 дробь нах
 if mounth>0:
-	if val is 0:print(' ',mounth,skl(mounth,1))
-	else:print(' ',mounth,skl(mounth,1),end='')	
+	if val is 0:
+		print(' ',mounth,skl(mounth,1))
+	else:
+		print(' ',mounth,skl(mounth,1),end='')	
 ### недели
-if val>=604800:week=val//(604800);val=val-week*604800 # 24часа*7дней*3600секВчасе или 24часа*3600секВчасе*7днейВнеделе=604800секВнед
+if val>=604800:
+	week=val//(604800)
+	val=val-week*604800 # 24часа*7дней*3600секВчасе или 24часа*3600секВчасе*7днейВнеделе=604800секВнед
 #print('  ',week,'Недели') if week>1 else print('  ',week,'Неделя') # трёхместное if/else
 if week>1:
-	if val is 0:print(' ',week,'Недели')
-	else:print(' ',week,'Недели',end='')
+	if val is 0:
+		print(' ',week,'Недели')
+	else:
+		print(' ',week,'Недели',end='')
 elif week is 1:
-	if val is 0:print(' ',week,'Неделю')
-	else:print(' ',week,'Неделю',end='')
+	if val is 0:
+		print(' ',week,'Неделю')
+	else:
+		print(' ',week,'Неделю',end='')
 ### сутки
-if val>=86400:day=val//(86400);val=val-day*86400 # 24часаВсутках*3600секВчасе=86400секВсутках
+if val>=86400:
+	day=val//(86400)
+	val=val-day*86400 # 24часаВсутках*3600секВчасе=86400секВсутках
 if day>0: 
 	# переносить строку если дальше нету результатов, если есть не переносить и писать след результ в одну строку
-	if val is 0:print(' ',day,skl(day,2))
-	else:print(' ',day,skl(day,2),end='')
+	if val is 0:
+		print(' ',day,skl(day,2))
+	else:
+		print(' ',day,skl(day,2),end='')
 ### часы
-if val>=3600:hour=val//3600;val=val-hour*3600 # 60секундВминуте*60минутВчасе=3600секВчасе
+if val>=3600:
+	hour=val//3600
+	val=val-hour*3600 # 60секундВминуте*60минутВчасе=3600секВчасе
 if hour>0:
-	if val is 0:print(' ',hour,skl(hour,3))
-	else:print(' ',hour,skl(hour,3),end='')
+	if val is 0:
+		print(' ',hour,skl(hour,3))
+	else:
+		print(' ',hour,skl(hour,3),end='')
 ### минуты
-if val>59:minute=val//60;val=val-minute*60
+if val>59:
+	minute=val//60
+	val=val-minute*60
 if minute>0:
-	if val is 0:print(' ',minute,skl(minute,4))
-	else:rmin=minute,skl(minute,4);print(rmin[0],rmin[1],end='') #print('    ',minute,skl(minute,4),end=' ')	
+	if val is 0:
+		print(' ',minute,skl(minute,4))
+	else:
+		rmin=minute,skl(minute,4)
+		print(rmin[0],rmin[1],end='') #print(' ',minute,skl(minute,4),end=' ')	
 ### остаток секунд
-if val!=0:print (' ',val, skl(val,5))
-
+if val!=0:
+	print (' ',val, skl(val,5))
