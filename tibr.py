@@ -118,13 +118,13 @@ def loadNbench():
 	# вытягиваем число из строки полученой из бенчмарка pyrit или aircrack-ng
 	dch={0:'0',1:'1',2:'2',3:'3',4:'4',5:'5',6:'6',7:'7',8:'8',9:'9',10:'.'}
 	dot=0
-	b=[]
+	str_num=[]
 	for char in ls:
 		if char:
 			for key in dch:
 				if char is dch[key]:
 					if dch[key] is '.':dot+=1
-					b.append(dch[key])
+					str_num.append(dch[key])
 		if dot>=1:break
 	x=0
 	speed='' # инициализируем пустую переменную типа str потом в цикле добавим к ней значения
