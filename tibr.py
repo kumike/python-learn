@@ -52,7 +52,7 @@ def calcPassInDic():
 		# если открывать файл через менеджер контекста то не нужно тогда его закрывать, with позаботится о закрытии
 		with open(args.filename,'r') as dicfile: # в open(,'r') 'r' не важен, по умолчанию открывается для чтения, на всяк случай указал
 			dia=sum(1 for line in dicfile) # sum() возвращает int, думаю преобразовыватьв int лишнее.
-		print('Количество паролей в словаре:',dia)
+		print('Количество паролей в словаре:',dia,'\n')
 		return dia
 	except FileNotFoundError:
 		exit('Файл не найден!')
@@ -109,8 +109,10 @@ def loadNbench():
 	th_startBenchstr_num.start()
 	th_startBenchstr_num.join()
 
-	# если не задано аргументом путь к файлу с паролями спросить интерактивно количество паролей
-	if args.filename is None:
+	# если не задано аргументом путь к файлу с паролями или не введено вручную количество, спросить интерактивно количество паролей
+	if args.dia:
+		dia=args.dia
+	elif args.filename is None:
 		dia=inputNumPass()
 	else: # иначе взять файл и подсчитать в нём количество паролей(строк)
 		dia=calcPassInDic()
@@ -153,11 +155,18 @@ def helpwin():
 	return print(win)
 ### конец определения функций ###
 
-# TODO доделать нада чтобы с бенчамрком требовалось ввести или путь к файлу паролей или количество паролей вручную
 # выбор нужного режима работы, интерактивный или с определением скорости
 if args.speedA and args.speedP: # если обе переменные True
 #	print('error')
 	exit('[ERROR] Only -A or -P')
+
+elif args.speedA and args.speed: # если обе переменные True
+	helpwin()
+	exit('[ERROR] -А и -s не используются вместе')
+
+elif args.speedP and args.speed: # если обе переменные True
+	helpwin()
+	exit('[ERROR] -P и -s не используются вместе')
 
 elif args.speedA or args.speedP: # если одна из переменных True
 	speed,dia=loadNbench()
@@ -165,6 +174,8 @@ elif args.speedA or args.speedP: # если одна из переменных T
 elif args.filename is not None and args.speedA is False and args.speedA is False and args.dia is None and args.speed is None:
 	calcPassInDic()
 	exit() # выходим чтобы дальше с нулём не считало
+elif args.dia and args.speed:
+	speed,dia=args.speed,args.dia
 else:
 	helpwin()
 	speed,dia=interactive()
@@ -174,7 +185,7 @@ else:
 val=dia//speed # // - оператор деления с усечением дробной части, но если делить флоат то так флоат и останется! 
 
 if val!=0: # если результат нулевой не выводим хедер таблики подсчёта
-	print('\n---- Результат подсчёта ----\n')
+	print('---- Результат подсчёта ----\n')
 	print('С скоростью',speed,'k/s, количество вариантов равное',dia,'будет перебираться\n')
 # задаем значения переменных в ноль? чтобы потом при расчётах не ругалось на неопределённую переменную
 year,mounth,week,day,hour,minute=0,0,0,0,0,0
