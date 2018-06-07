@@ -103,11 +103,11 @@ def loadNbench():
 			if ilo is len(lo):ilo=0 # инкрементировать переменную нада после принт чтобы начинался перебор кортежа с 0 ()кортеж []список
 			if ian is len(an):ian=0
 
-	th_startBenchstr_num=threading.Thread(target=startBenchstr_num)
-	th_startLoadAnim=threading.Thread(target=startLoadAnim)
 	# стартуем две функции паралельно и ждём их завершения .join()
-	th_startBenchstr_num.start();th_startLoadAnim.start()
-	th_startBenchstr_num.join();th_startLoadAnim.join()
+	th_startBenchstr_num=threading.Thread(target=startBenchstr_num)
+	threading.Thread(target=startLoadAnim).start()
+	th_startBenchstr_num.start()
+	th_startBenchstr_num.join()
 
 	# если не задано аргументом путь к файлу с паролями спросить интерактивно количество паролей
 	if args.filename is None:
