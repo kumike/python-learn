@@ -129,8 +129,8 @@ def loadNbench():
 	for char in ls:
 		if char:
 			for key in dch:
-				if char is dch[key]:
-					if dch[key] is '.':dot+=1
+				if char == dch[key]:
+					if dch[key] == '.':dot+=1
 					str_num.append(dch[key])
 		if dot>=1:break
 	x=0
