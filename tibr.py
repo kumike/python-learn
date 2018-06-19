@@ -166,12 +166,12 @@ if args.speedA and args.speedP: # если обе переменные True
 	print(redf,'Only -A or -P')
 	exit()
 
-elif args.speedA and args.speed: # если обе переменные True
+elif args.speedA and args.speed:
 	helpwin()
 	print(redf,'-А и -s не используются вместе')
 	exit()
 
-elif args.speedP and args.speed: # если обе переменные True
+elif args.speedP and args.speed:
 	helpwin()
 	print(redf,'-P и -s не используются вместе')
 	exit()
