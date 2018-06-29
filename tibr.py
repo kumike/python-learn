@@ -15,8 +15,8 @@ parser.add_argument('-P',dest='speedP',action='store_true',help='Получит�
 args=parser.parse_args()
 
 # цветные фишки для вывода
-greenf='\033[1;2m[\033[0m\033[1;32m*\033[0m\033[1;2m]\033[0m'
-redf='\033[1;2m[\033[0m\033[1;31m!\033[0m\033[1;2m]\033[0m'
+greenf=' \033[1;2m[\033[0m\033[1;32m*\033[0m\033[1;2m]\033[0m'
+redf=' \033[1;2m[\033[0m\033[1;31m!\033[0m\033[1;2m]\033[0m'
 
 ### начало определения функций ###
 ### функции для интерактивного ввода
@@ -24,10 +24,10 @@ def inputNumPass():
 	try:
 		while True:
 			try:
-				dia=int(input('Количество паролей: '))
+				dia=int(input(' Количество паролей: '))
 				break
 			except ValueError:
-				print(redf,'Допускаются только целые числа!')
+				print(redf,' Допускаются только целые числа!')
 	except KeyboardInterrupt: # если юзер при вводе значений жмет ctrl-c то выходим и печатаем сообщение
 		print('\n'+redf,'Выход!')
 		exit() # если не ловить это то будет бросатся Traceback и стандартное сообщение в консоль
@@ -36,7 +36,7 @@ def inputSpeed():
 	try:
 		while True:
 			try:
-				speed=int(input('Скорость перебора: '))
+				speed=int(input(' Скорость перебора: '))
 				if speed==0:
 					print(redf,'Введите не ноль!')
 					continue
@@ -148,6 +148,17 @@ def interactive():
 	speed=inputSpeed()
 	return speed,dia
 
+### функция для рисования баннера
+def printBanner():
+	centr = ' '*16
+	y = '\033[93m'
+	r = '\033[0m'
+	print(centr+y+' _   _ _'+r)
+	print(centr+y+'| |_(_| |__  _ __'+r)
+	print(centr+y+'| __| | \'_ \| \'__|'+r)
+	print(centr+y+'| |_| | |_) | |'+r)
+	print(centr+y+' \__|_|_.__/|_|\n'+r)
+
 ### функция выводит строку хелпа и рисует вокруг строки рамку вне зависимости от длинны строки
 def helpwin():
 #	from os import path
@@ -185,6 +196,7 @@ elif args.filename is not None and args.speedA is False and args.speedA is False
 elif args.dia and args.speed:
 	speed,dia=args.speed,args.dia
 else:
+	printBanner()
 	helpwin()
 	speed,dia=interactive()
 
